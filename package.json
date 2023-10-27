@@ -34,10 +34,10 @@
     "pluralize": "^8.0.0"
   },
   "devDependencies": {
-    "@appril/dev": "^0.2.0",
-    "@appril/scripts": "^0.2.0",
+    "@appril/dev": "^0.2.2",
+    "@appril/scripts": "^0.2.2",
     "@types/lodash": "^4.14.200",
-    "@types/node": "^20.8.8",
+    "@types/node": "^20.8.9",
     "@types/pg": "^8.10.7",
     "@types/pluralize": "^0.0.32",
     "esbuild": "^0.19.5",
