@@ -81,6 +81,7 @@ export function tablesMapper(
     return [{
       schema,
       name,
+      fullName,
       primaryKey: columns.find((e) => e.isPrimaryKey)?.name,
       declaredName,
       recordName,

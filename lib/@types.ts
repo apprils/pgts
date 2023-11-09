@@ -109,6 +109,7 @@ export type ColumnDeclaration = {
 export type TableDeclaration = {
   schema: string;
   name: string;
+  fullName: string;
   primaryKey?: string;
   declaredName: string;
   recordName: string;
@@ -128,6 +129,7 @@ export type TableDeclaration = {
 export type ViewDeclaration = {
   schema: string;
   name: string;
+  fullName: string;
   primaryKey?: string;
   declaredName: string;
   recordName: string;
