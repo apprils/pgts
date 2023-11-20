@@ -202,8 +202,6 @@ function columnsMapper(
     const isOptional = isNullable || isIdentity || defaultValue
 
     let zodSchema: string | undefined
-    let zodSchemaRefine = "z"
-    let zodImport: ZodImport | undefined
 
     if (zodConfig && zodConfig?.[tableName] !== false && !isGenerated) {
 
@@ -216,38 +214,39 @@ function columnsMapper(
         if (zodColumns[name] === false) {
           zodSchema = undefined
         }
-        else if (typeof zodColumns[name] === "string") {
-          zodSchemaRefine = zodColumns[name] as string
+        else if (typeof zodColumns[name] === "string" || zodColumns[name] === undefined) {
+
+          // order does matter!
+
+          if (maxLength) {
+            zodSchema += `.max(${ maxLength })`
+          }
+
+          if (isNullable) {
+            zodSchema += ".nullable()"
+          }
+
+          // array should always go last
+          if (isArray) {
+            zodSchema += ".array()"
+          }
+
+          if (isOptional) {
+            // .optional().array() does not ssem to work with undefined values
+            zodSchema = `z.optional(${ zodSchema })`
+          }
+
+          zodSchema = `((z) => ${ zodColumns[name] || "z" })(${ zodSchema })`
+
+        }
+        else if (typeof zodColumns[name] === "function") {
+          zodSchema = `(${ zodColumns[name].toString() })(z)`
         }
         else if ((zodColumns[name] as ImportedZod)?.import) {
-          zodSchema = undefined
-          zodImport = { ...zodColumns[name] as ImportedZod, as: importAs(zodColumns[name] as ImportedZod) }
-          onZodImport(zodImport)
+          zodSchema = importAs(zodColumns[name] as ImportedZod)
+          onZodImport({ ...zodColumns[name] as ImportedZod, as: zodSchema })
         }
 
-      }
-
-    }
-
-    if (zodSchema) {
-
-      // order does matter!
-
-      if (maxLength) {
-        zodSchema += `.max(${ maxLength })`
-      }
-
-      if (isOptional) {
-        zodSchema += ".optional()"
-      }
-
-      if (isNullable) {
-        zodSchema += ".nullable()"
-      }
-
-      // array should always go last
-      if (isArray) {
-        zodSchema += ".array()"
       }
 
     }
@@ -262,8 +261,7 @@ function columnsMapper(
       defaultValue,
       declaredType,
       comments,
-      zodSchema: zodImport?.as || zodSchema,
-      zodSchemaRefine,
+      zodSchema,
     }]
 
   }
