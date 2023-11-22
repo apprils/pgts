@@ -2,10 +2,11 @@
 import type { MaterializedViewColumn, TableColumn, ViewColumn } from "extract-pg-schema";
 
 import type {
-  ResolvedConfig, CustomType,
+  ResolvedConfig,
+  CustomType, ExplicitType,
   EnumDeclaration, ColumnDeclaration,
   ImportedType, TypeImport,
-  ZodColumn, ImportedZod, ZodImport, ExplicitType,
+  ZodColumn,
 } from "./@types";
 
 import { defaultTypeMap, defaultZodTypeMap } from "./default-type-maps";
@@ -19,20 +20,17 @@ export function columnsIterator(
   columns: ColumnDeclaration[];
   enumImports: string[];
   typeImports: TypeImport[];
-  zodImports: ZodImport[];
 } {
 
   const columns: ColumnDeclaration[] = []
   const enumImports: Record<string, boolean> = {}
   const typeImports: Record<string, TypeImport> = {}
-  const zodImports: Record<string, TypeImport> = {}
 
   // avoiding name collisions by importing same type only once per table + path.
   // for cases when multiple tables importing same type,
   // import path and table name appended to import name (see @importAs)
   const onEnumImport = (enumImport: string) => enumImports[enumImport] = true
   const onTypeImport = (typeImport: TypeImport) => typeImports[typeImport.as] = typeImport
-  const onZodImport = (zodImport: TypeImport) => zodImports[zodImport.as] = zodImport
 
   columns.push(
     ...tableColumns.flatMap(
@@ -40,7 +38,7 @@ export function columnsIterator(
         config,
         tableName,
         enums,
-        { onEnumImport, onTypeImport, onZodImport }
+        { onEnumImport, onTypeImport }
       )
     )
   )
@@ -49,7 +47,6 @@ export function columnsIterator(
     columns,
     enumImports: Object.keys(enumImports),
     typeImports: Object.values(typeImports),
-    zodImports: Object.values(zodImports),
   }
 
 }
@@ -58,10 +55,9 @@ function columnsMapper(
   config: ResolvedConfig,
   tableName: string,
   enums: EnumDeclaration[],
-  { onEnumImport, onTypeImport, onZodImport }: {
+  { onEnumImport, onTypeImport }: {
     onEnumImport: (e: string) => void;
     onTypeImport: (e: TypeImport) => void;
-    onZodImport: (e: TypeImport) => void;
   },
 ) {
 
@@ -106,7 +102,7 @@ function columnsMapper(
     // eg. when bundling all tables in a single file
     // and multiple tables imoprting same type.
     // so appending import path and table name to import name.
-    const importAs = (imported: ImportedType | ImportedZod) => [
+    const importAs = (imported: ImportedType) => [
       imported.import,
       imported.from.replace(/\W/g, "_"),
       tableName.split(".")[1] || tableName,
@@ -207,46 +203,37 @@ function columnsMapper(
 
       zodSchema = zodTypeMap[type] || "z.any()"
 
-      if (typeof zodConfig?.[tableName] === "object") {
+      const zodColumns = { ...zodConfig?.[tableName] as Record<string, ZodColumn> }
 
-        const zodColumns = { ...zodConfig?.[tableName] as Record<string, ZodColumn> }
+      if (typeof zodColumns[name] === "string" || name in zodColumns === false) {
 
-        if (zodColumns[name] === false) {
-          zodSchema = undefined
-        }
-        else if (typeof zodColumns[name] === "string" || zodColumns[name] === undefined) {
+        // order does matter!
 
-          // order does matter!
-
-          if (maxLength) {
-            zodSchema += `.max(${ maxLength })`
-          }
-
-          if (isNullable) {
-            zodSchema += ".nullable()"
-          }
-
-          // array should always go last
-          if (isArray) {
-            zodSchema += ".array()"
-          }
-
-          if (isOptional) {
-            // .optional().array() does not ssem to work with undefined values
-            zodSchema = `z.optional(${ zodSchema })`
-          }
-
-          zodSchema = `((z) => ${ zodColumns[name] || "z" })(${ zodSchema })`
-
-        }
-        else if (typeof zodColumns[name] === "function") {
-          zodSchema = `(${ zodColumns[name].toString() })(z)`
-        }
-        else if ((zodColumns[name] as ImportedZod)?.import) {
-          zodSchema = importAs(zodColumns[name] as ImportedZod)
-          onZodImport({ ...zodColumns[name] as ImportedZod, as: zodSchema })
+        if (maxLength) {
+          zodSchema += `.max(${ maxLength })`
         }
 
+        if (isNullable) {
+          zodSchema += ".nullable()"
+        }
+
+        // array should always go last
+        if (isArray) {
+          zodSchema += ".array()"
+        }
+
+        if (isOptional) {
+          // .optional().array() does not ssem to work with undefined values
+          zodSchema = `z.optional(${ zodSchema })`
+        }
+
+        if (zodColumns[name]) {
+          zodSchema = `((z) => ${ zodColumns[name] })(${ zodSchema })`
+        }
+
+      }
+      else if (typeof zodColumns[name] === "function") {
+        zodSchema = `(${ zodColumns[name].toString() })(z)`
       }
 
     }

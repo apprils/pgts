@@ -44,7 +44,6 @@ export function tablesMapper(
       columns,
       enumImports,
       typeImports,
-      zodImports,
     } = columnsIterator(
       config,
       fullName,
@@ -95,7 +94,6 @@ export function tablesMapper(
       columns,
       enumImports,
       typeImports,
-      zodImports,
     }]
 
   }

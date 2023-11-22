@@ -44,10 +44,9 @@ export type VarNominator = (name: string, context: NominatorContext) => string
 
 export type ModelNominator = (name: string, context: NominatorContext) => string
 
-export type ImportedZod = { import: string; from: string }
-export type ZodImport = ImportedZod & { as: string }
+export type ZodFunction = (s: typeof z) => z.ZodTypeAny
 
-export type ZodColumn = boolean | string | ((s: typeof z) => z.ZodTypeAny) | ZodImport
+export type ZodColumn = boolean | string | ZodFunction
 
 export type ZodTable = boolean | Record<string, ZodColumn>
 
@@ -123,7 +122,6 @@ export type TableDeclaration = {
   columns: ColumnDeclaration[];
   enumImports: string[];
   typeImports: ImportedType[];
-  zodImports: ZodImport[];
 }
 
 export type ViewDeclaration = {
