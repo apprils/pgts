@@ -29,7 +29,7 @@
     "pub": "npm pub"
   },
   "dependencies": {
-    "extract-pg-schema": "^4.2.4",
+    "extract-pg-schema": "^4.3.1",
     "lodash": "^4.17.21",
     "pluralize": "^8.0.0",
     "zod": "^3.22.4"
@@ -37,11 +37,11 @@
   "devDependencies": {
     "@appril/dev": "^0.2.2",
     "@appril/scripts": "^0.2.2",
-    "@types/lodash": "^4.14.200",
-    "@types/node": "^20.8.9",
-    "@types/pg": "^8.10.7",
-    "@types/pluralize": "^0.0.32",
-    "esbuild": "^0.19.5",
-    "typescript": "^5.2.2"
+    "@types/lodash": "^4.14.202",
+    "@types/node": "^20.10.4",
+    "@types/pg": "^8.10.9",
+    "@types/pluralize": "^0.0.33",
+    "esbuild": "^0.19.9",
+    "typescript": "^5.3.3"
   }
 }
