@@ -245,6 +245,9 @@ function columnsMapper(
       isPrimaryKey,
       isOptional,
       isGenerated,
+      isRegular: isPrimaryKey || isGenerated
+        ? false
+        : true,
       defaultValue,
       declaredType,
       comments,

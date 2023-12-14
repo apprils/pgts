@@ -99,6 +99,7 @@ export type ColumnDeclaration = {
   isPrimaryKey?: boolean;
   isOptional: boolean;
   isGenerated: boolean;
+  isRegular: boolean;
   defaultValue: any;
   declaredType: string;
   comments: string[];
@@ -120,6 +121,7 @@ export type TableDeclaration = {
   constructorName: string;
   modelName: string;
   columns: ColumnDeclaration[];
+  regularColumns: ColumnDeclaration[];
   enumImports: string[];
   typeImports: ImportedType[];
 }

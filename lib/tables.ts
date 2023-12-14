@@ -92,6 +92,7 @@ export function tablesMapper(
       queryBuilder,
       constructorName,
       columns,
+      regularColumns: columns.filter((e) => e.isRegular),
       enumImports,
       typeImports,
     }]
