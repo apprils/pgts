@@ -44,7 +44,6 @@ export function tablesMapper(
       columns,
       enumImports,
       typeImports,
-      zodImports,
     } = columnsIterator(
       config,
       fullName,
@@ -81,6 +80,7 @@ export function tablesMapper(
     return [{
       schema,
       name,
+      fullName,
       primaryKey: columns.find((e) => e.isPrimaryKey)?.name,
       declaredName,
       recordName,
@@ -92,9 +92,9 @@ export function tablesMapper(
       queryBuilder,
       constructorName,
       columns,
+      regularColumns: columns.filter((e) => e.isRegular),
       enumImports,
       typeImports,
-      zodImports,
     }]
 
   }

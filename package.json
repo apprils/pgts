@@ -1,12 +1,12 @@
 {
-  "version": "0.2.0",
+  "version": "0.2.5",
   "name": "@appril/pgts",
   "description": "PostgreSQL Typed Schema",
   "author": "Slee Woo",
   "license": "MIT",
   "engines": {
-    "node": "20.8",
-    "npm": "10"
+    "node": "20.10",
+    "npm": "10.2"
   },
   "files": [
     "pkg/*"
@@ -26,21 +26,24 @@
     "postbuild": "tsc -p lib/tsconfig.json",
     "// ✨ publish": "",
     "prepub": "npm run build",
-    "pub": "npm pub"
+    "pub": "npm pub",
+    "postpub": "mkdir -p var/pub; npm pack --pack-destination var/pub"
   },
   "dependencies": {
-    "extract-pg-schema": "^4.2.4",
+    "extract-pg-schema": "^4.3.2",
     "lodash": "^4.17.21",
-    "pluralize": "^8.0.0"
+    "pluralize": "^8.0.0",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@appril/dev": "^0.2.0",
-    "@appril/scripts": "^0.2.0",
-    "@types/lodash": "^4.14.200",
-    "@types/node": "^20.8.8",
-    "@types/pg": "^8.10.7",
-    "@types/pluralize": "^0.0.32",
-    "esbuild": "^0.19.5",
-    "typescript": "^5.2.2"
+    "@appril/dev": "^0.2.2",
+    "@appril/scripts": "^0.2.2",
+    "@types/lodash": "^4.14.202",
+    "@types/node": "^20.10.5",
+    "@types/pg": "^8.10.9",
+    "@types/pluralize": "^0.0.33",
+    "esbuild": "^0.19.10",
+    "release-it": "^17.0.1",
+    "typescript": "^5.3.3"
   }
 }

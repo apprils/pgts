@@ -1,5 +1,6 @@
 
 import type { ConnectionConfig } from "pg";
+import { z } from "zod";
 
 export type { ConnectionConfig }
 
@@ -43,10 +44,9 @@ export type VarNominator = (name: string, context: NominatorContext) => string
 
 export type ModelNominator = (name: string, context: NominatorContext) => string
 
-export type ImportedZod = { import: string; from: string }
-export type ZodImport = ImportedZod & { as: string }
+export type ZodFunction = (s: typeof z) => z.ZodTypeAny
 
-export type ZodColumn = boolean | string | ZodImport
+export type ZodColumn = boolean | string | ZodFunction
 
 export type ZodTable = boolean | Record<string, ZodColumn>
 
@@ -99,16 +99,17 @@ export type ColumnDeclaration = {
   isPrimaryKey?: boolean;
   isOptional: boolean;
   isGenerated: boolean;
+  isRegular: boolean;
   defaultValue: any;
   declaredType: string;
   comments: string[];
   zodSchema?: string;
-  zodSchemaRefine?: string;
 }
 
 export type TableDeclaration = {
   schema: string;
   name: string;
+  fullName: string;
   primaryKey?: string;
   declaredName: string;
   recordName: string;
@@ -120,14 +121,15 @@ export type TableDeclaration = {
   constructorName: string;
   modelName: string;
   columns: ColumnDeclaration[];
+  regularColumns: ColumnDeclaration[];
   enumImports: string[];
   typeImports: ImportedType[];
-  zodImports: ZodImport[];
 }
 
 export type ViewDeclaration = {
   schema: string;
   name: string;
+  fullName: string;
   primaryKey?: string;
   declaredName: string;
   recordName: string;
