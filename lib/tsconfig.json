@@ -1,11 +1,9 @@
 {
-  "extends": "@appril/dev/tsconfig.lib.json",
+  "extends": "@appril/tsconfig/lib.json",
   "include": [
-    ".",
-    "env.d.ts"
+    "."
   ],
   "compilerOptions": {
-    "emitDeclarationOnly": true,
     "outDir": "../pkg"
   }
 }

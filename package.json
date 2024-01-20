@@ -20,28 +20,33 @@
     }
   },
   "scripts": {
+    "esbundler": "func() { e=$1; shift; esbuild $e --bundle --platform=node --target=node20 --packages=external $*; }; func",
     "// ✨ build": "",
     "prebuild": "mkdir -p pkg; find pkg -type f -exec rm -fv {} \\;",
-    "build": "esbundler lib/index.ts --sourcemap=inline --outdir=pkg",
+    "build": "npm run esbundler -- lib/index.ts --sourcemap=inline --outdir=pkg",
     "postbuild": "tsc -p lib/tsconfig.json"
   },
   "release-it": {
     "hooks": {
-      "before:init": [ "npm run build" ],
-      "after:release": [ "mkdir -p var/pub", "npm pack --pack-destination var/pub" ]
+      "before:init": [
+        "npm run build"
+      ],
+      "after:release": [
+        "mkdir -p var/pub",
+        "npm pack --pack-destination var/pub"
+      ]
     }
   },
   "dependencies": {
-    "extract-pg-schema": "^4.3.2",
+    "extract-pg-schema": "^4.4.0",
     "lodash": "^4.17.21",
     "pluralize": "^8.0.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@appril/dev": "^0.2.3",
-    "@appril/scripts": "^0.2.3",
+    "@appril/tsconfig": "^0.2.2",
     "@types/lodash": "^4.14.202",
-    "@types/node": "^20.10.6",
+    "@types/node": "^20.11.5",
     "@types/pg": "^8.10.9",
     "@types/pluralize": "^0.0.33",
     "esbuild": "^0.19.11",
