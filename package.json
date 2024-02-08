@@ -20,20 +20,19 @@
     }
   },
   "scripts": {
-    "esbundler": "func() { e=$1; shift; esbuild $e --bundle --platform=node --target=node20 --packages=external $*; }; func",
+    "// ✨ lint": "",
+    "lint": "biome lint ./lib",
     "// ✨ build": "",
+    "esbundler": "func() { e=$1; shift; esbuild $e --bundle --platform=node --target=node20 --packages=external $*; }; func",
+    "// ✨ build package": "",
     "prebuild": "mkdir -p pkg; find pkg -type f -exec rm -fv {} \\;",
-    "build": "npm run esbundler -- lib/index.ts --sourcemap=inline --outdir=pkg",
+    "build": "set -e; npm run lint; npm run esbundler -- lib/index.ts --sourcemap=inline --outdir=pkg",
     "postbuild": "tsc -p lib/tsconfig.json"
   },
   "release-it": {
     "hooks": {
       "before:init": [
         "npm run build"
-      ],
-      "after:release": [
-        "mkdir -p var/pub",
-        "npm pack --pack-destination var/pub"
       ]
     }
   },
@@ -45,6 +44,7 @@
   },
   "devDependencies": {
     "@appril/tsconfig": "^0.2.2",
+    "@biomejs/biome": "^1.5.3",
     "@types/lodash": "^4.14.202",
     "@types/node": "^20.11.5",
     "@types/pg": "^8.10.9",
