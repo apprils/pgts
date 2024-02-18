@@ -1,43 +1,30 @@
-
 import type { ResolvedConfig, EnumDeclaration } from "./@types";
 
 import { defaultEnumNominator } from "./nominators";
 
-export function enumsMapper(
-  config: ResolvedConfig,
-  schema: string,
-) {
+export function enumsMapper(config: ResolvedConfig, schema: string) {
+  const { enumFilter, enumNominator, enumUnionSuffix } = config;
 
-  const {
-    enumFilter,
-    enumNominator,
-    unionSuffix,
-  } = config
-
-  return function(
-    { name, values }: { name: string, values: string[] },
-  ): EnumDeclaration[] {
-
+  return (entry: { name: string; values: string[] }): EnumDeclaration[] => {
+    const { name, values } = entry;
 
     if (!enumFilter(name, { schema })) {
-      return []
+      return [];
     }
 
     const declaredName = enumNominator(name, {
       schema,
       defaultNominator: defaultEnumNominator,
-    })
+    });
 
-    return [{
-      schema,
-      name,
-      declaredName,
-      values,
-      unionSuffix,
-    }]
-
-
-  }
-
+    return [
+      {
+        schema,
+        name,
+        declaredName,
+        values,
+        enumUnionSuffix,
+      },
+    ];
+  };
 }
-

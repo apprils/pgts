@@ -1,96 +1,76 @@
-
 import type { ViewColumn, MaterializedViewColumn } from "extract-pg-schema";
 
 import { columnsIterator } from "./columns";
 
-import {
-  defaultViewNominator, defaultConstantNominator,
-  defaultVarNominator, defaultModelNominator,
-} from "./nominators";
+import { defaultViewNominator, defaultModelNominator } from "./nominators";
 
-import type { ResolvedConfig, ViewDeclaration, EnumDeclaration } from "./@types";
+import type {
+  ResolvedConfig,
+  ViewDeclaration,
+  EnumDeclaration,
+  OnTypeImport,
+} from "./@types";
+
+type ViewAssets = {
+  name: string;
+  columns: ViewColumn[] | MaterializedViewColumn[];
+};
 
 export function viewsMapper(
   config: ResolvedConfig,
   schema: string,
   enums: EnumDeclaration[],
+  callbacks: { onTypeImport: OnTypeImport },
 ) {
-
   const {
     viewFilter,
     viewNominator,
-    constantNominator,
-    varNominator,
     modelNominator,
     viewSuffix,
-    constructorSuffix,
     queryBuilderSuffix,
-  } = config
+  } = config;
 
-  return function(
-    view: { name: string; columns: ViewColumn[] | MaterializedViewColumn[] },
-  ): ViewDeclaration[] {
-
-    const { name } = view
-    const fullName = [ schema, name ].join(".")
+  return (view: ViewAssets): ViewDeclaration[] => {
+    const { name } = view;
+    const fullName = [schema, name].join(".");
 
     if (!viewFilter(name, { schema })) {
-      []
+      [];
     }
 
-    const {
-      columns,
-      enumImports,
-      typeImports,
-    } = columnsIterator(
+    const columns = columnsIterator(
       config,
       fullName,
       view.columns,
       enums,
-    )
+      callbacks,
+    );
 
     const declaredName = viewNominator(name, {
       schema,
       defaultNominator: defaultViewNominator,
-    })
+    });
 
-    const recordName = declaredName + viewSuffix
-    const queryBuilder = declaredName + queryBuilderSuffix
-    const constructorName = declaredName + constructorSuffix
-
-    const constant = constantNominator(name, {
-      schema,
-      defaultNominator: defaultConstantNominator,
-    })
-
-    const varName = varNominator(name, {
-      schema,
-      defaultNominator: defaultVarNominator,
-    })
+    const recordName = declaredName + viewSuffix;
+    const queryBuilder = declaredName + queryBuilderSuffix;
 
     const modelName = modelNominator(name, {
       schema,
       defaultNominator: defaultModelNominator,
-    })
+    });
 
-    return [{
-      schema,
-      name,
-      fullName,
-      primaryKey: columns.find((e) => e.isPrimaryKey)?.name,
-      declaredName,
-      recordName,
-      queryBuilder,
-      constructorName,
-      constant,
-      varName,
-      modelName,
-      columns,
-      enumImports,
-      typeImports,
-    }]
-
-  }
-
+    return [
+      {
+        schema,
+        name,
+        fullName,
+        primaryKey: columns.find((e) => e.isPrimaryKey)?.name,
+        declaredName,
+        recordName,
+        queryBuilder,
+        modelName,
+        columns,
+      },
+    ];
+  };
 }
-

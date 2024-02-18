@@ -1,4 +1,3 @@
-
 // gently borrowed from kristiandupont/kanel
 
 export const defaultTypeMap: Record<string, string> = {
@@ -22,7 +21,7 @@ export const defaultTypeMap: Record<string, string> = {
   "pg_catalog.timetz": "Date",
   "pg_catalog.timestamp": "Date",
   "pg_catalog.timestamptz": "Date",
-}
+};
 
 export const defaultZodTypeMap: Record<string, string> = {
   "pg_catalog.int2": "z.number().int()",
@@ -57,5 +56,4 @@ export const defaultZodTypeMap: Record<string, string> = {
   "pg_catalog.tsrange": "z.string()",
   "pg_catalog.tstzrange": "z.string()",
   "pg_catalog.daterange": "z.string()",
-}
-
+};

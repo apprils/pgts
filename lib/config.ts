@@ -1,10 +1,7 @@
-
 import {
   defaultTableNominator,
   defaultEnumNominator,
   defaultViewNominator,
-  defaultConstantNominator,
-  defaultVarNominator,
   defaultModelNominator,
 } from "./nominators";
 
@@ -15,20 +12,16 @@ export const config: DefaultConfig = {
   recordSuffix: "T",
   insertSuffix: "I",
   updateSuffix: "U",
-  unionSuffix: "U",
+  enumUnionSuffix: "E",
   viewSuffix: "V",
   queryBuilderSuffix: "Q",
-  constructorSuffix: "C",
   tableNominator: defaultTableNominator,
   tableFilter: () => true,
   enumNominator: defaultEnumNominator,
   enumFilter: () => true,
   viewNominator: defaultViewNominator,
   viewFilter: () => true,
-  constantNominator: defaultConstantNominator,
-  varNominator: defaultVarNominator,
   modelNominator: defaultModelNominator,
-}
+};
 
-export default config
-
+export default config;
