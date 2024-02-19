@@ -79,7 +79,6 @@ function columnsMapper(
     let declaredType = "unknown";
     let explicitType = false;
 
-    const [schema] = type.split(".");
     const comments: string[] = [];
 
     // order does matter!
@@ -89,6 +88,9 @@ function columnsMapper(
     // - check tableCustomTypes
 
     if (kind === "enum") {
+      // enum name should be extracted from fullName
+      const [schema, name] = type.split(".");
+
       const e = enums.find((e) => e.name === name && e.schema === schema);
 
       if (e) {
@@ -119,6 +121,7 @@ function columnsMapper(
         if (typeImport.nullable) {
           isNullable = true;
         }
+        const [schema] = type.split(".");
         onTypeImport({ ...typeImport, declaredType }, schema);
       } else if ((customDef as ExplicitType).as) {
         declaredType = (customDef as ExplicitType).as;
