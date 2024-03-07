@@ -11,8 +11,6 @@
   "files": [
     "pkg/*"
   ],
-  "// ✨ seems exports.types not fully supported by all editors yet?": "",
-  "types": "./pkg/index.d.ts",
   "exports": {
     ".": {
       "require": "./pkg/index.js",
@@ -20,14 +18,15 @@
     }
   },
   "scripts": {
-    "// ✨ lint": "",
+    "// ✨ linters": "",
     "lint": "biome lint ./lib",
+    "// ✨ types": "",
+    "tsc": "tsc --emitDeclarationOnly",
+    "// ✨ builders": "",
+    "esbuilder": "set -e; func() { e=$1; shift; esbuild lib/$e.ts --outfile=pkg/$e.js --bundle --platform=node --target=node20 --packages=external --sourcemap=inline $*; }; func",
     "// ✨ build": "",
-    "esbundler": "func() { e=$1; shift; esbuild $e --bundle --platform=node --target=node20 --packages=external $*; }; func",
-    "// ✨ build package": "",
     "prebuild": "mkdir -p pkg; find pkg -type f -exec rm -fv {} \\;",
-    "build": "set -e; npm run lint; npm run esbundler -- lib/index.ts --sourcemap=inline --outdir=pkg",
-    "postbuild": "tsc"
+    "build": "set -e; npm run lint; npm run tsc; npm run esbuilder index"
   },
   "release-it": {
     "hooks": {
@@ -43,14 +42,14 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@appril/tsconfig": "^0.2.3",
+    "@appril/tsconfig": "^0.2.5",
     "@biomejs/biome": "^1.5.3",
     "@types/lodash": "^4.14.202",
-    "@types/node": "^20.11.19",
-    "@types/pg": "^8.11.0",
+    "@types/node": "^20.11.25",
+    "@types/pg": "^8.11.2",
     "@types/pluralize": "^0.0.33",
-    "esbuild": "^0.20.0",
+    "esbuild": "^0.20.1",
     "release-it": "^17.1.1",
-    "typescript": "^5.3.3"
+    "typescript": "^5.4.2"
   }
 }
