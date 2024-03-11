@@ -42,8 +42,8 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@appril/tsconfig": "^0.2.5",
     "@biomejs/biome": "^1.5.3",
+    "@appril/configs": "^0.2.7",
     "@types/lodash": "^4.14.202",
     "@types/node": "^20.11.25",
     "@types/pg": "^8.11.2",
