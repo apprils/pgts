@@ -1,5 +1,5 @@
 import type { ConnectionConfig } from "pg";
-import { z } from "zod";
+import type { ZodTypeAny, z } from "zod";
 
 export type { ConnectionConfig };
 
@@ -54,7 +54,7 @@ export type ModelNominator = (
   context: NominatorContext,
 ) => string;
 
-export type ZodFunction = (s: typeof z) => z.ZodTypeAny;
+export type ZodFunction = (_z: typeof z) => ZodTypeAny;
 
 export type ZodColumn = boolean | string | ZodFunction;
 
