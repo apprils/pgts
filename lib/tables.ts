@@ -34,7 +34,6 @@ export function tablesMapper(
     columns: TableColumn[];
   }): TableDeclaration[] => {
     const { name } = table;
-    const fullName = [schema, name].join(".");
 
     if (!tableFilter(name, { schema })) {
       return [];
@@ -42,7 +41,8 @@ export function tablesMapper(
 
     const columns = columnsIterator(
       config,
-      fullName,
+      schema,
+      name,
       table.columns,
       enums,
       callbacks,
@@ -67,7 +67,7 @@ export function tablesMapper(
       {
         schema,
         name,
-        fullName,
+        fullName: [schema, name].join("."),
         primaryKey: columns.find((e) => e.isPrimaryKey)?.name,
         declaredName,
         recordName,

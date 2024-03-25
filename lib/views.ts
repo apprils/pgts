@@ -32,7 +32,6 @@ export function viewsMapper(
 
   return (view: ViewAssets): ViewDeclaration[] => {
     const { name } = view;
-    const fullName = [schema, name].join(".");
 
     if (!viewFilter(name, { schema })) {
       [];
@@ -40,7 +39,8 @@ export function viewsMapper(
 
     const columns = columnsIterator(
       config,
-      fullName,
+      schema,
+      name,
       view.columns,
       enums,
       callbacks,
@@ -63,7 +63,7 @@ export function viewsMapper(
       {
         schema,
         name,
-        fullName,
+        fullName: [schema, name].join("."),
         primaryKey: columns.find((e) => e.isPrimaryKey)?.name,
         declaredName,
         recordName,

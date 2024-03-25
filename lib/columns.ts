@@ -19,25 +19,27 @@ import { defaultTypeMap, defaultZodTypeMap } from "./default-type-maps";
 
 export function columnsIterator(
   config: ResolvedConfig,
-  tableName: string,
-  tableColumns: TableColumn[] | ViewColumn[] | MaterializedViewColumn[],
+  schema: string,
+  name: string,
+  columns: TableColumn[] | ViewColumn[] | MaterializedViewColumn[],
   enums: EnumDeclaration[],
   callbacks: {
     onTypeImport: OnTypeImport;
   },
 ): ColumnDeclaration[] {
-  const columns: ColumnDeclaration[] = [];
+  const columnDeclarations: ColumnDeclaration[] = [];
 
-  columns.push(
-    ...tableColumns.flatMap(columnsMapper(config, tableName, enums, callbacks)),
+  columnDeclarations.push(
+    ...columns.flatMap(columnsMapper(config, schema, name, enums, callbacks)),
   );
 
-  return columns;
+  return columnDeclarations;
 }
 
 function columnsMapper(
   config: ResolvedConfig,
-  tableName: string,
+  schema: string,
+  name: string,
   enums: EnumDeclaration[],
   {
     onTypeImport,
@@ -46,6 +48,7 @@ function columnsMapper(
   },
 ) {
   const { customTypes, zod: zodConfig } = config;
+  const fullName = [schema, name].join(".");
 
   const zodTypeMap = {
     ...defaultZodTypeMap,
@@ -53,8 +56,8 @@ function columnsMapper(
   };
 
   const tableCustomTypes: Record<string, CustomType> =
-    typeof customTypes[tableName] === "object"
-      ? { ...(customTypes[tableName] as object) }
+    typeof customTypes[fullName] === "object"
+      ? { ...(customTypes[fullName] as object) }
       : {};
 
   return (
@@ -121,7 +124,6 @@ function columnsMapper(
         if (typeImport.nullable) {
           isNullable = true;
         }
-        const [schema] = type.split(".");
         onTypeImport({ ...typeImport, declaredType }, schema);
       } else if ((customDef as ExplicitType).as) {
         declaredType = (customDef as ExplicitType).as;
@@ -165,11 +167,11 @@ function columnsMapper(
 
     let zodSchema: string | undefined;
 
-    if (zodConfig && zodConfig?.[tableName] !== false && !isGenerated) {
+    if (zodConfig && zodConfig?.[fullName] !== false && !isGenerated) {
       zodSchema = zodTypeMap[type] || "z.any()";
 
       const zodColumns = {
-        ...(zodConfig?.[tableName] as Record<string, ZodColumn>),
+        ...(zodConfig?.[fullName] as Record<string, ZodColumn>),
       };
 
       if (
